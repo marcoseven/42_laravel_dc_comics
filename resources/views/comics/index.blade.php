@@ -10,7 +10,7 @@
         <div class="container">
 
 
-            @foreach($comics as $index => $comic)
+            @foreach($comics as $comic)
 
 
             @include('partials.comic')

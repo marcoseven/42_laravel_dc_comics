@@ -19,40 +19,41 @@ Route::get('/', function () {
 
 
 /* COMICS ROUTES */
-Route::get('/comics', function () {
-
-    $comics = config('db.comics');
-    //ddd($comics);
-
-    return view('comics.index', compact('comics'));
-})->name('comics');
+Route::get('/comics', 'ComicController@index')->name('comics');
+Route::get('comics/{comic}', 'ComicController@show')->name('comic');
 
 
-Route::get('comics/{id}', function ($id) {
-    $comics = config('db.comics');
+/* Posts */
 
-    // check if the id is a numeric value
-    // and check the value is greather than or equal to 0
-    // and check if the value if less than the length of the array
-    if (is_numeric($id) && $id >= 0 && $id < count($comics)) {
-        $comic = $comics[$id];
-        //ddd($comic);
+// Mostra lista di risorse
+Route::get('admin/posts', 'Admin\PostController@index')->name('admin.posts.index');
+// Mostra form per creare nuova risorsa
+Route::get('admin/posts/create', 'Admin\PostController@create')->name('admin.posts.create');
+// Salvo nel database la risorsa
+Route::post('posts', 'Admin\PostController@store')->name('admin.posts.store');
+// Mostra la singlola risorsa
+Route::get('posts/{post}', 'Admin\PostController@show')->name('admin.posts.show');
+// Mostra un form per modificare la risorsa
+Route::get('posts/{post}/edit', 'Admin\PostController@edit')->name('admin.posts.edit');
+// Aggiorniamo la risorda nel database
+Route::put('posts/{post}', 'Admin\PostController@update')->name('admin.posts.update');
+// Cancello la risorsa
+Route::delete('posts/{post}', 'Admin\PostController@destroy')->name('admin.posts.destroy');
 
-        return view('comics.show', compact('comic'));
-    } else {
-        abort(404);
-    }
-})->name('comic');
+
 
 
 /* /COMICS ROUTES */
 
 
-
-Route::get('/movies', function () {
-    /* return view('movies'); */
+/* Route::get('/movies', function () {
+    return view('movies');
     return 'Movies Page';
-})->name('movies');
+})->name('movies'); */
+
+Route::resource('movies', 'Admin\MovieController');
+
+
 
 Route::get('/tv', function () {
     /* return view('movies'); */
@@ -80,7 +81,7 @@ Route::get('/fans', function () {
 })->name('fans');
 
 Route::get('/news', function () {
-    /* return view('movies'); */
+
     return 'New Page';
 })->name('news');
 
@@ -88,65 +89,3 @@ Route::get('/shop', function () {
     /* return view('movies'); */
     return 'shop Page';
 })->name('shop');
-
-
-
-Route::get('oop', function () {
-
-    // Sintassi Class oop
-    /*
-    - parola chiave class
-    - node in PascalCase dell'entitá da rappresentare
-    - parentesi graffe
-    */
-    class Person
-    {
-        public $name;
-        public $lastname;
-        public $type = 'Human';
-    }
-
-    // Instanza di una classe (oggetto)
-    $giovanni = new Person();
-    $doina = new Person();
-
-    // Aggiungere valori agli attributi
-    $giovanni->name = 'Giovanni';
-    $giovanni->lastname = 'Belda';
-
-    $doina->name = 'Doina';
-    $doina->lastname = 'Ganceriuc';
-    // Accedere alle attributi
-    //dd($giovanni->name, $doina->name);
-
-    //dd($giovanni, $doina);
-
-
-    class Car
-    {
-        public $make;
-        public $model;
-        public $price;
-
-
-        public function setPrice(int $price)
-        {
-
-            $this->price = $price;
-        }
-
-        public function getPrice()
-        {
-            return $this->price;
-        }
-    }
-
-    $tesla = new Car();
-    $tesla->make = "tesla";
-    $tesla->model = 'X';
-    $tesla->setPrice(30000);
-
-    $teslax_price = $tesla->getPrice();
-
-    dd($tesla->price, $teslax_price,$tesla);
-});

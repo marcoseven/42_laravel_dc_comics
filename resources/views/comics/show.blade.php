@@ -7,9 +7,9 @@
 <div class="comic">
     <div class="poster">
 
-        <img src="{{$comic['thumb']}}" alt="{{$comic['title']}} poster">
+        <img src="{{ $comic->thumb }}" alt="{{ $comic->title }} poster">
     </div>
 
-    <p>{{$comic['series']}}</p>
+    <p>{{$comic->series}}</p>
 </div>
 @endsection
