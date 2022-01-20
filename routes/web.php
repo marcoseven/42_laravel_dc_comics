@@ -30,15 +30,15 @@ Route::get('admin/posts', 'Admin\PostController@index')->name('admin.posts.index
 // Mostra form per creare nuova risorsa
 Route::get('admin/posts/create', 'Admin\PostController@create')->name('admin.posts.create');
 // Salvo nel database la risorsa
-Route::post('posts', 'Admin\PostController@store')->name('admin.posts.store');
+Route::post('admin/posts', 'Admin\PostController@store')->name('admin.posts.store');
 // Mostra la singlola risorsa
-Route::get('posts/{post}', 'Admin\PostController@show')->name('admin.posts.show');
+Route::get('admin/posts/{post}', 'Admin\PostController@show')->name('admin.posts.show');
 // Mostra un form per modificare la risorsa
-Route::get('posts/{post}/edit', 'Admin\PostController@edit')->name('admin.posts.edit');
+Route::get('admin/posts/{post}/edit', 'Admin\PostController@edit')->name('admin.posts.edit');
 // Aggiorniamo la risorda nel database
-Route::put('posts/{post}', 'Admin\PostController@update')->name('admin.posts.update');
+Route::put('admin/posts/{post}', 'Admin\PostController@update')->name('admin.posts.update');
 // Cancello la risorsa
-Route::delete('posts/{post}', 'Admin\PostController@destroy')->name('admin.posts.destroy');
+Route::delete('admin/posts/{post}', 'Admin\PostController@destroy')->name('admin.posts.destroy');
 
 
 

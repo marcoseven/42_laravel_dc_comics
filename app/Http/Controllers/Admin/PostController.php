@@ -76,7 +76,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('admin.posts.show', compact('post'));
     }
 
     /**
@@ -87,7 +87,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('admin.posts.edit', compact('post'));
     }
 
     /**
@@ -99,7 +99,16 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        // Validate your DATA!!
+        $validated_data = $request->validate([
+            'title' => 'required|unique:posts',
+            'body' => 'nullable'
+        ]);
+        //ddd($post, $request->all());
+        $post->update($validated_data);
+
+        return redirect()->route('admin.posts.index')->with('message', '🥳 Complimenti hai modificato il post');
+
     }
 
     /**
@@ -110,6 +119,9 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return redirect()->route('admin.posts.index')->with('message', '😱 Hai rimosso un post per sempre!! Sei fregato!');;
+
     }
+
 }
