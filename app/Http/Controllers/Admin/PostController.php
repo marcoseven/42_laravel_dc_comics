@@ -37,12 +37,32 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        // Validate your DATA!!
+        $validated_data = $request->validate([
+            'title' => 'required|unique:posts',
+            'body' => 'nullable'
+        ]);
+
+        Post::create($validated_data);
+        //ddd($validated_data);
+        /*
+        con i dati validati
+        $post = new Post();
+        $post->title = $validated_data['title'];
+        $post->body = $validated_data['body'];
+        $post->save();
+
+        */
         //ddd($request->all());
         //ddd($request->title);
-        $post = new Post();
+        // Senza validazione
+        /* $post = new Post();
         $post->title = $request->title;
         $post->body = $request->body;
-        $post->save();
+        $post->save(); */
+
+
+
 
         // POST / REDIRECT / GET
         return redirect()->route('admin.posts.index');

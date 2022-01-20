@@ -2,7 +2,7 @@
     <!-- Site header here  -->
     <div class="topnav">
         <nav class="container">
-
+            <a href="{{route('admin.posts.index')}}">Admin</a>
             <a href="#">DC Power</a>
             <a href="#">Additional dc Sites</a>
 

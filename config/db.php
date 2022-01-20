@@ -224,7 +224,7 @@ return [
             'text' => 'comics'
         ],
         [
-            'href' => 'movies',
+            'href' => 'movies.index',
             'text' => 'movies'
         ],
         [
