@@ -63,10 +63,43 @@ Route::get('/tv', function () {
     return 'Tv Page';
 })->name('tv');
 
+/* GAMES
+
+# migration
+- id
+- title
+- cover
+- description
+- is_available
+- created_at
+- updated_at
+
+Routes - guest: index, show
+Route - admin: index, show, create, edit, store, update, delete
+
+
+*/
+
+/* GAMES Routes - GUEST */
+
 Route::get('/games', function () {
     /* return view('movies'); */
     return 'Games Page';
 })->name('games');
+Route::get('games/{game}', 'GameController@show');
+
+/* Games Routes - Admin */
+Route::get('admin/games', 'Admin\GameController@index')->name('admin.games.index');
+Route::get('admin/games/create', 'Admin\GameController@create')->name('admin.games.create');
+Route::post(
+    'admin/games',
+    'Admin\GameController@store'
+)->name('admin.games.store');
+Route::get('admin/games/{game}', 'Admin\GameController@show')->name('admin.games.show');
+
+
+/* /Games */
+
 
 Route::get('/collectibles', function () {
     /* return view('movies'); */
@@ -83,10 +116,11 @@ Route::get('/fans', function () {
     return 'Fans Page';
 })->name('fans');
 
-Route::get('/news', function () {
 
-    return 'New Page';
-})->name('news');
+/* POSTS - GUEST */
+Route::get('/news', 'PostController@index')->name('news');
+Route::get('/news/{post}', 'PostController@show')->name('single-post');
+
 
 Route::get('/shop', function () {
     /* return view('movies'); */

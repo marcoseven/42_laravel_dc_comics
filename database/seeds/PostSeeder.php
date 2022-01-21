@@ -16,6 +16,7 @@ class PostSeeder extends Seeder
         for ($i = 0; $i < 10; $i++) {
             $post = new Post();
             $post->title = $faker->sentence();
+            $post->poster = $faker->imageUrl(600, 400, 'posts');
             $post->body = $faker->paragraphs(10, true);
             $post->save();
         }

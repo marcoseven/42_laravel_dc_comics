@@ -1,61 +1,285 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# CRUD STEPS
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Creazione Modello, Migrazione, Seeder, Controller (resource)
 
-## About Laravel
+`php artisan make:model Models/Game -a`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Compilare la migrazione
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Pensa alla struttura della tabella!!
 
-## Learning Laravel
+```php
+// Metodo UP
+   public function up()
+    {
+        Schema::create('games', function (Blueprint $table) {
+            $table->id();
+            $table->string('title', 200);
+            $table->string('cover')->default('https://picsum.photos/300/200');
+            $table->longText('desc')->nullable();
+            $table->boolean('is_available')->default(true);
+            $table->timestamps();
+        });
+    }
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+    public function down()
+    {
+        Schema::dropIfExists('games');
+    }
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```
 
-## Laravel Sponsors
+Migra il db
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+`php artisan migrate`
 
-### Premium Partners
+## Seeder
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[OP.GG](https://op.gg)**
+Seeder creato prima con -a sul modello, altrimenti `php artisan make:seeder GameSeeder`
 
-## Contributing
+Importa il modello nel Seeder
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`use App\Models\Game;`
 
-## Code of Conduct
+Importa faker
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+`use Faker\Generator as Faker;`
 
-## Security Vulnerabilities
+Dependency injection nel metodo run e ciclo for
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```php
 
-## License
+public function run(Faker $faker)
+    {
+        for ($i = 0; $i < 10; $i++) {
+            # code...
+        }
+    }
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Inserire i dati con faker
+
+```php
+#code ..
+$game = new Game();
+$game->title = $faker->sentence();
+$game->cover = $faker->imageUrl(300, 200, 'Games');
+$game->desc = $faker->paragraphs(10, true);
+$game->is_available = $faker->boolean(80);
+$game->save();
+```
+
+Aggiungi il seeder al DatabaseSeeder.php se vuoi migragrare e seedare tutto insieme
+
+```php
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     *
+     * @return void
+     */
+    public function run()
+    {
+        $this->call(ComicSeeder::class);
+        $this->call(PostSeeder::class);
+        $this->call(GameSeeder::class);
+    }
+}
+
+```
+
+Seeda il db
+
+`php artisan db:seed --class=GameSeeder`
+
+## Creazione CRUD
+
+- creazione rotte
+- resource controller x Admin
+- controller semplice x guests
+
+in web.php definiamo rotta per mostrare tutte le risorse
+
+```php
+# R = READ
+Route::get('admin/games', 'Admin\GameController@index')->name('admin.games.index');
+
+
+```
+
+
+## Controller lato Admin
+
+Ricorda che il namespace deve essere Admin `namespace App\Http\Controllers\Admin;`
+
+Implementiamo metodo `@index` nel controller Admin\GameControler.php
+
+```php
+ public function index()
+  {
+      $games = Game::orderBy('id', 'desc')->paginate(12);
+      return view('admin.games.index', compact('games'));
+  }
+
+```
+
+Creazione della View come tabella, usa snippet bootsrap per generare la tabella e inserire i dati.
+
+
+Creazione rotta per inserire nuova risorsa, in web.php
+
+
+```php
+# R = READ
+Route::get('admin/games', 'Admin\GameController@index')->name('admin.games.index');
+Route::get('admin/games/create', 'Admin\GameController@create')->name('admin.games.create');
+```
+
+Restituire la view dal controller per mostrare un form
+
+nel controller `Admin\GameController` implementa metodo `create`
+
+```php
+public function create()
+{
+    return view('admin.games.create');
+}
+```
+
+Creazione view nella cartella `resources/views/admin/games/` che chiamiamo create.blade.php
+
+```bash
+touch create.blade.php 
+
+```
+
+form per inserire i dati
+
+- ricorda il `@csrf` token
+- l'azione nel form é `action="{{ route('admin.games.store') }}"`
+- il metodo del form é POST
+- non dimenticare l'attributo `name=` sugli input che combacia con nomi colonne tabella.
+
+```html
+<form action="{{ route('admin.games.store') }}" method="post">
+    @csrf
+
+    <!-- Campi del form qui  -->
+
+</form>
+
+```
+
+### Implementiamo metodo STORE
+
+Crea la rotta in web.php
+
+```php
+Route::post(
+    'admin/games',
+    'Admin\GameController@store'
+)->name('admin.games.store');
+```
+
+dumpa a schermo la richiesta nel metodo `@store`
+
+```php
+
+ public function store(Request $request)
+  {
+      //
+      ddd($request->all());
+  }
+
+```
+
+Validiamo i dati, inserendo le regole di validazione. Sfruttiamo metodo `validate([])` della classe request
+[Docs](https://laravel.com/docs/7.x/validation#validation-quickstart)
+
+```php
+$val_data = $request->validate([
+    'title' => ['required', 'max:200'],
+    'cover' => ['nullable', 'max:255'],
+    'desc' => ['nullable'],
+
+]);
+
+```
+
+Creaiamo il record nel db, sempre nem metodo `store()`
+
+```php
+// Salviamo il record nel database
+Game::create($val_data);
+
+```
+
+NOTE: Ricorda di aggiungere le fillable properties nel modello `Add [title] to fillable property to allow mass assignment on [App\Models\Game].`
+
+Aggiungi questa riga nel modello Game.php (se usi modello diverso i valori li devi cambiare!)
+
+```php
+protected $fillable = ['title', 'cover', 'desc'];
+```
+
+Reindirizza l'utente, qui sotto il metodo completo
+
+```php
+   public function store(Request $request)
+    {
+        //
+        //ddd($request->all());
+
+        // Validiamo i dati
+        $val_data = $request->validate([
+            'title' => ['required', 'max:200'],
+            'cover' => ['nullable', 'max:255'],
+            'desc' => ['nullable'],
+
+        ]);
+        //ddd($val_data);
+
+        // Salviamo il record nel database
+        Game::create($val_data);
+
+        // rendirizza l'utente ad una view di tipo get
+        return redirect()->route('admin.games.index');
+    }
+
+```
+
+Ricorda di aggiungere gli errori di validazione nel form!
+[documentazione](https://laravel.com/docs/7.x/validation#quick-displaying-the-validation-errors)
+
+```html
+
+
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
+```
+
+Ricorda che puoi usare anche la direttiva blade @error, ad esempio
+
+```html
+<input id="title" type="text" class="@error('title') is-invalid @enderror">
+
+@error('title')
+    <div class="alert alert-danger">{{ $message }}</div>
+@enderror
+
+```
+
+Puoi anche conservare il testo inserito nel form qualora la validazione fallisse usando funzione `old()`
+ad esempio:
+`value="{{old('title')}}"`

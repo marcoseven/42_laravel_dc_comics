@@ -20,7 +20,28 @@
 
 <body>
 
-    @yield('content')
+
+    <div class="wrapper d-flex">
+        <aside class="w-25">
+            <div class="logo">
+                <a href="{{route('home')}}">
+                    <img src="{{asset('img/dc-logo.png')}}" alt="">
+                </a>
+            </div>
+            <nav class="nav flex-column">
+                <a class="nav-link {{ Route::currentRouteName() === 'admin.posts.index' ? 'active' : '' }}" aria-current="page" href="{{route('admin.posts.index')}}">Posts</a>
+                <a class="nav-link" href="#">Movies</a>
+                <a class="nav-link {{ Route::currentRouteName() === 'admin.games.index' ? 'active' : '' }}" href="{{route('admin.games.index')}}">Games</a>
+                <a class="nav-link" href="#">Comics</a>
+                <a class="nav-link">Videos</a>
+            </nav>
+
+        </aside>
+        <main class="container p-5">
+            @yield('content')
+        </main>
+    </div>
+
 
 </body>
 
