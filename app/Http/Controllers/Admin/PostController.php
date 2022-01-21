@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
@@ -101,8 +102,11 @@ class PostController extends Controller
     {
         // Validate your DATA!!
         $validated_data = $request->validate([
-            'title' => 'required|unique:posts',
-            'body' => 'nullable'
+            'title' => [
+                'required',
+                Rule::unique('posts')->ignore($post->id),
+            ],
+            'body' => ['nullable']
         ]);
         //ddd($post, $request->all());
         $post->update($validated_data);

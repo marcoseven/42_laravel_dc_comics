@@ -51,6 +51,7 @@
             font-weight: bold;
             color: $dc-gray;
             padding: 2rem 0;
+            border-bottom: 4px solid transparent;
 
             &:hover {
                 border-bottom: 4px solid $dc-blue;

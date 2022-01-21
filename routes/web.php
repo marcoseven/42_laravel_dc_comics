@@ -23,6 +23,9 @@ Route::get('/comics', 'ComicController@index')->name('comics');
 Route::get('comics/{comic}', 'ComicController@show')->name('comic');
 
 
+/* Dashboard */
+Route::view('admin', 'admin.dashboard')->name('admin');
+
 /* Posts */
 
 // Mostra lista di risorse

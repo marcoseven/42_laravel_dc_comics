@@ -11318,6 +11318,7 @@ img {
   font-weight: bold;
   color: #303030;
   padding: 2rem 0;
+  border-bottom: 4px solid transparent;
 }
 .menu_wrapper .main_menu a:hover {
   border-bottom: 4px solid #0282F9;
